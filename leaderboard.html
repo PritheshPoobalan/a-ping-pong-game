@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pripro Pong Leaderboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Additional styles for larger leaderboard */
+    .leaderboard-container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+    
+    .leaderboard-item {
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+    }
+    
+    .rank {
+      font-size: 1.3rem;
+      width: 60px;
+    }
+    
+    .user-info {
+      font-size: 1.2rem;
+    }
+    
+    .score-info {
+      font-size: 1.2rem;
+    }
+    
+    @media (max-width: 768px) {
+      .leaderboard-item {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .rank, .user-info, .score-info {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="leaderboard-container">
+    <div class="leaderboard-header">
+      <h1><i class="fas fa-trophy"></i> Pripro Pong Leaderboard</h1>
+      <div class="last-updated" id="lastUpdated"></div>
+    </div>
+
+    <div class="search-container">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search username..." maxlength="15">
+      <button class="search-btn" id="searchBtn">
+        <i class="fas fa-search"></i> Search
+      </button>
+    </div>
+
+    <div class="loading" id="loading">
+      <i class="fas fa-spinner fa-spin"></i> Loading leaderboard...
+    </div>
+
+    <ul class="leaderboard-list" id="leaderboardList"></ul>
+
+    <button id="backBtn" class="btn">
+      <i class="fas fa-arrow-left"></i> Back to Game
+    </button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Supabase config
+    const supabaseUrl = 'https://xvdeijzqjumkvchxabwc.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh2ZGVpanpxanVta3ZjaHhhYndjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwODMwMzEsImV4cCI6MjA2ODY1OTAzMX0.kf6fCNd4n2sVcb06qyHo9zJ_7lRxMUZgryaGbp2mDJ8';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    // DOM elements
+    const leaderboardList = document.getElementById('leaderboardList');
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const loadingElement = document.getElementById('loading');
+    const lastUpdated = document.getElementById('lastUpdated');
+    const backBtn = document.getElementById('backBtn');
+
+    // Current user from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentUser = urlParams.get('user');
+
+    // Fetch leaderboard data
+    async function fetchLeaderboard(searchTerm = '') {
+      try {
+        loadingElement.style.display = 'block';
+        leaderboardList.innerHTML = '';
+        
+        let query = supabase
+          .from('Leaderboard')
+          .select('id, username, score, level, device, os, created_at')
+          .order('score', { ascending: false })
+          .limit(100);
+
+        if (searchTerm.trim()) {
+          query = query.ilike('username', `%${searchTerm.trim()}%`);
+        }
+
+        const { data, error } = await query;
+
+        if (error) throw error;
+
+        loadingElement.style.display = 'none';
+        
+        if (!data || data.length === 0) {
+          leaderboardList.innerHTML = '<li class="leaderboard-item">No scores yet. Be the first!</li>';
+          return;
+        }
+
+        // Render leaderboard items
+        data.forEach((entry, index) => {
+          const li = document.createElement('li');
+          li.className = 'leaderboard-item';
+          
+          if (currentUser && entry.username === currentUser) {
+            li.classList.add('current-user');
+          }
+
+          let rankClass = '';
+          let medalIcon = '';
+          if (index === 0) {
+            rankClass = 'rank-1';
+            medalIcon = '<i class="fas fa-crown"></i>';
+          } else if (index === 1) {
+            rankClass = 'rank-2';
+            medalIcon = '<i class="fas fa-medal"></i>';
+          } else if (index === 2) {
+            rankClass = 'rank-3';
+            medalIcon = '<i class="fas fa-medal"></i>';
+          }
+
+          let deviceIcon = '';
+          if (entry.device === 'mobile') {
+            deviceIcon = '<i class="fas fa-mobile-alt" title="Mobile"></i>';
+          } else if (entry.device === 'tablet') {
+            deviceIcon = '<i class="fas fa-tablet-alt" title="Tablet"></i>';
+          } else {
+            deviceIcon = '<i class="fas fa-desktop" title="Desktop"></i>';
+          }
+
+          li.innerHTML = `
+            <div class="rank ${rankClass}">${medalIcon}${index + 1}</div>
+            <div class="user-info">
+              <span class="username">${entry.username}</span>
+              ${deviceIcon}
+              <span class="os">${entry.os}</span>
+            </div>
+            <div class="score-info">
+              <span class="score">${entry.score} pts</span>
+              <span class="level">(Level ${entry.level})</span>
+            </div>
+          `;
+          leaderboardList.appendChild(li);
+        });
+
+        lastUpdated.textContent = `Last updated: ${new Date().toLocaleString()}`;
+
+      } catch (error) {
+        console.error('Leaderboard error:', error);
+        loadingElement.style.display = 'none';
+        leaderboardList.innerHTML = `
+          <li class="leaderboard-item error">
+            <i class="fas fa-exclamation-triangle"></i>
+            ${error.message || 'Failed to load leaderboard'}
+          </li>
+        `;
+      }
+    }
+
+    // Event listeners
+    searchBtn.addEventListener('click', () => {
+      fetchLeaderboard(searchInput.value);
+    });
+
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        fetchLeaderboard(searchInput.value);
+      }
+    });
+
+    backBtn.addEventListener('click', () => {
+      window.close();
+    });
+
+    // Initial load
+    document.addEventListener('DOMContentLoaded', fetchLeaderboard);
+  </script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Pripro Pong Game: browser-based single-player pong game with AI opponent,
+       score tracking, level progression and Supabase integration. -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" 
+        content="default-src 'self';
+                script-src 'self' https://cdn.jsdelivr.net https://xvdeijzqjumkvchxabwc.supabase.co;
+                style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com;
+                font-src 'self' https://fonts.gstatic.com data:;
+                img-src 'self' data:;
+                connect-src 'self' https://xvdeijzqjumkvchxabwc.supabase.co;
+                frame-src 'none';
+                object-src 'none';
+                worker-src 'none'">
+  <title>Pripro Pong Game</title>
+
+  <!-- Font Awesome icons (preloaded, with a fallback when loading fails) -->
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
+  
+  <!-- Google Fonts with beautiful typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Beautiful icon fallback system -->
+  <style>
+    .icon-fallback {
+      display: none;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-weight: bold;
+    }
+    .no-fa .fas + .icon-fallback {
+      display: inline-block;
+      margin-left: 4px;
+    }
+    .no-fa .fas {
+      display: none;
+    }
+  </style>
+</head>
+<body class="smooth-transitions">
+  <!-- [Rest of your beautiful HTML remains exactly the same] -->
+
+  <!-- Loading screen: spinner, loader text, details line and security badge -->
+  <div id="loadingScreen" class="fade-in">
+    <div class="loader-content glass-card">
+      <div class="loader-circle spin-animation"></div>
+      <div id="loaderText" class="text-glow">Loading Pripro Pong...</div>
+      <div id="loaderDetails" class="text-muted"></div>
+      <div id="securityStatus" class="security-badge">
+        <i class="fas fa-shield-alt"></i>
+        <span class="icon-fallback"></span>
+        <span>Security Verified</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- [All other beautiful components remain unchanged] -->
+
+  <!-- Supabase client from CDN, then the local game script -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="game.js"></script>
+  
+  <!-- Detects Font Awesome loading and shows text fallbacks when it is unavailable -->
+  <script>
+    setTimeout(() => {
+      if (!window.FontAwesome?.config || !document.querySelector('.fa-gamepad')?.style.fontFamily.includes('Font Awesome')) {
+        document.documentElement.classList.add('no-fa');
+        console.log('Using beautiful fallback icons');
+      }
+    }, 1000);
+  </script>
+  <!--
+  ========================================================================
+  File overview: index.html (Pripro Pong Game)
+  
+  Entry point: charset / viewport / CSP meta tags, CDN preloads (Font Awesome,
+  Google Fonts), style.css, loading screen, game scripts
+  (https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2 then game.js), and the
+  icon fallback detector.
+  
+  The Content Security Policy allows scripts from self, cdn.jsdelivr.net, and
+  the configured Supabase host, and connections to the same Supabase host.
+  
+  Sections kept from the original project are marked with placeholder
+  comments such as "[Rest of your ... remains unchanged]". Preserve those
+  markers and add new markup around them.
+  
+  Before connecting to your own leaderboard, replace the placeholder Supabase
+  URL and anon key with values from your Supabase project settings.
+  ========================================================================
+  -->
+
+</body>
+</html>

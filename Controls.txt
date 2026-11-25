@@ -1,0 +1,6 @@
+Pripro Pong Game - Controls
+===========================
+
+Move your paddle: Up and Down arrow keys (or W and S)
+Pause / unpause: P or Esc
+Start game: Spacebar

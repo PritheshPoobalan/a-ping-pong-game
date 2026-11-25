@@ -1,0 +1,10 @@
+{
+  "name": "pripro-pong-game",
+  "version": "1.0.0",
+  "description": "A browser-based pong game built with HTML, CSS and JavaScript",
+  "main": "game.js",
+  "scripts": {
+    "start": "python3 -m http.server 8000"
+  },
+  "license": "MIT"
+}

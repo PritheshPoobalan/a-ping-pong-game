@@ -1,0 +1,95 @@
+/* Pripro Pong Game - style.css
+ *
+ * This file defines the visual design of the pong game.
+ *
+ * Design tokens (:root):
+ * --primary, --primary-light, --primary-dark  - primary brand color
+ * --secondary, --secondary-dark               - secondary brand color
+ * --accent, --accent-light                    - accent color
+ * --dark, --darker, --light, --lighter        - neutral surface colors
+ * --ease-out-quint, --ease-in-out-back        - timing functions
+ * --text-glow, --box-glow                     - glow effects
+ *
+ * Components:
+ * body.smooth-transitions  - base page styles and gradient background
+ * .fade-in                 - loading screen fade animation
+ * .spin-animation          - loading spinner rotation
+ * .glass-card              - frosted glass card effect
+ * .text-glow / .text-muted - text styling utilities
+ *
+ * The remaining component styles are represented by a placeholder comment in
+ * this repository copy.
+ */
+
+/* Modern CSS Variables with beautiful palette */
+:root {
+  --primary: #6c5ce7;
+  --primary-light: #a29bfe;
+  --primary-dark: #5649c0;
+  --secondary: #fd79a8;
+  --secondary-dark: #e84393;
+  --accent: #00b894;
+  --accent-light: #55efc4;
+  --dark: #1e272e;
+  --darker: #2d3436;
+  --light: #f5f6fa;
+  --lighter: #ffffff;
+  
+  /* Beautiful transitions */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-back: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  
+  /* Beautiful glow effects */
+  --text-glow: 0 0 8px rgba(168, 153, 254, 0.6);
+  --box-glow: 0 0 16px rgba(168, 153, 254, 0.4);
+}
+
+/* Beautiful base styles */
+body.smooth-transitions {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: linear-gradient(135deg, var(--darker), var(--dark));
+  color: var(--light);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+  transition: background 0.8s var(--ease-out-quint);
+}
+
+/* Beautiful loading animation */
+.fade-in {
+  animation: beautiful-fade 0.8s var(--ease-out-quint) forwards;
+}
+@keyframes beautiful-fade {
+  from { opacity: 0; backdrop-filter: blur(0px); }
+  to { opacity: 1; backdrop-filter: blur(5px); }
+}
+
+.spin-animation {
+  animation: beautiful-spin 1.5s var(--ease-in-out-back) infinite;
+}
+@keyframes beautiful-spin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.05); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Beautiful card effect */
+.glass-card {
+  background: rgba(45, 52, 54, 0.7);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  box-shadow: var(--box-glow);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.4s var(--ease-out-quint);
+}
+
+/* Beautiful text effects */
+.text-glow {
+  text-shadow: var(--text-glow);
+}
+.text-muted {
+  opacity: 0.8;
+  font-size: 0.9em;
+}
+
+/* [Rest of your original beautiful styles remain unchanged] */
